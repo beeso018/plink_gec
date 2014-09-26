@@ -182,7 +182,7 @@ for line in fileinput.input("gec_out2"):
     elif "MAF" in line:
         gec_out3.write(line)
     elif line.startswith("The estimated"):
-        if line.endswith("chromosome 1"):
+        if "chromosome 1\n" in line:
             line=line.replace("chromosome 1", "chromosome 23")
             gec_out3.write(line)
         elif "chromosome 2" in line:
