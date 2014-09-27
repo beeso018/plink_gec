@@ -1,9 +1,12 @@
 import subprocess, shlex, fileinput, sys, os, glob, shutil
 
+# make hidden directory
 os.makedirs(".output", exist_ok=True)
 
+# ask user for filename from map/ped files
 filename=input("\nFile name?\n")
 
+# set SNP boundaries in PLINK commands
 plink1="./plink --file "
 plink2=" --silent --dog --nonfounders --allow-no-sex --snps "
 plink3=" --recode --out "
@@ -11,6 +14,7 @@ snp1_22="BICF2G630707759-G1212f41S99"
 snp23_39="BICF2P653617-TIGRP2P134917_rs8450925"
 print("\nPLINKing...\n")
 
+# string PLINK commands together & run as subprocess for GEC input
 plink=plink1+filename+plink2+snp1_22+plink3+".output/chr1_22"
 plink=shlex.split(plink)
 p=subprocess.Popen(plink).wait()
@@ -20,6 +24,7 @@ p=subprocess.Popen(plink).wait()
 
 os.chdir(".output")
 
+# rename chromosomes greater than 22 in map file for GEC recognition
 for line in fileinput.input("chr23_39.map", inplace=1):
     if line.startswith("23"):
         line=line.replace("23","1",1)
@@ -77,16 +82,15 @@ os.chdir("..")
 
 print("Doing some GEC stuff...\n")
 
+# string GEC commands together and run as subprocess
 gec1="java -jar -Xmx1g gec.jar --no-web --effect-number --linkage-file "
 gec2=" --genome --out "
-
 gec=gec1+".output/chr1_22"+gec2+".output/chr1_22"
 gec=shlex.split(gec)
 p1=subprocess.Popen(gec, stdout=subprocess.PIPE)
 chr1_22_out=p1.communicate()[0]
 chr1_22_gec_out=open('.output/gec_out', 'w')
 chr1_22_gec_out.write(chr1_22_out.decode('utf-8'))
-
 gec=gec1+".output/chr23_39"+gec2+".output/chr23_39"
 gec=shlex.split(gec)
 p2=subprocess.Popen(gec, stdout=subprocess.PIPE)
@@ -97,6 +101,7 @@ chr23_39_gec_out.close()
 
 os.chdir(".output")
 
+# get GEC summary stats
 with open("chr1_22.sum", "r") as chr1_22:
     for i in range(1):
         line=chr1_22.readline().strip()
@@ -108,12 +113,16 @@ with open("chr23_39.sum", "r") as chr23_39:
     for line in chr23_39:
         out2=line.strip().split('\t')
 
+# calculate total observed and effective markers
 obs=eval(out1[0])+eval(out2[0])
 eff=eval(out1[1])+eval(out2[1])
+
+# calculate corresponding p-value thresholds
 suggestive=0.1/eff
 significant=0.05/eff
 hsignificant=0.001/eff
 
+# rename chromosomes >22 again
 for line in fileinput.input("chr23_39.block.txt", inplace=1):
         out3=line.strip().split('\t')
         if out3[0]=="1":
@@ -151,6 +160,7 @@ for line in fileinput.input("chr23_39.block.txt", inplace=1):
         elif out3[0]=="17":
             print("39", out3[1], out3[2], out3[3], out3[4], sep='\t', end='')
 
+# combine block files
 blocks=open("gec_blocks.txt", 'w')
 for line in fileinput.input("chr1_22.block.txt"):
     blocks.write(line)
@@ -158,8 +168,10 @@ blocks2=open("gec_blocks.txt", 'a')
 for line in fileinput.input("chr23_39.block.txt"):
     blocks2.write(line)
 
+# move combined block file to working directory
 os.rename("gec_blocks.txt", "../gec_blocks.txt")
 
+# format GEC output and remove extraneous information
 gec_out3=open("gec_out3.txt", 'a')
 for line in fileinput.input("gec_out"):
     if line.startswith("The number"):
@@ -172,7 +184,6 @@ for line in fileinput.input("gec_out"):
         gec_out3.write(line)
     elif line.startswith("The estimated"):
         gec_out3.write(line)
-
 for line in fileinput.input("gec_out2"):
     if line.startswith("The number"):
         line=line.replace("chr23_39.map", "")
@@ -282,12 +293,16 @@ for line in fileinput.input("gec_out2"):
             line=line.replace("chromosome 17", "chromosome 39")
             gec_out3.write(line)
 
+# move combined output into working directory
 os.rename("gec_out3.txt", "../gec_out3.txt")
 os.chdir("..")
+
+# rename output to include original filename
 os.rename("gec_out3.txt", filename+"_gec_out.txt")
 os.rename("gec_blocks.txt", filename+"_gec_blocks.txt")
 shutil.rmtree(".output")
 
+# print calculated values
 print("Observed markers: ", obs)
 print("Effective markers: ", eff)
 print("Suggestive p-value: ", format(suggestive, '.3e'))
