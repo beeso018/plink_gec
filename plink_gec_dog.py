@@ -175,7 +175,7 @@ os.rename("gec_blocks.txt", "../gec_blocks.txt")
 gec_out3=open("gec_out3.txt", 'a')
 for line in fileinput.input("gec_out"):
     if line.startswith("The number"):
-        line=line.replace("chr1_22.map", "")
+        line=line.replace("chr1_22.map ", "")
         if "X" in line or "Y" in line or "MT" in line:
             line=""
         else:
@@ -186,7 +186,7 @@ for line in fileinput.input("gec_out"):
         gec_out3.write(line)
 for line in fileinput.input("gec_out2"):
     if line.startswith("The number"):
-        line=line.replace("chr23_39.map", "")
+        line=line.replace("chr23_39.map ", "")
         if "chromosome 1 " in line:
             line=line.replace("chromosome 1 ", "chromosome 23 ")
             gec_out3.write(line)
