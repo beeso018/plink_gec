@@ -130,7 +130,7 @@ for line in fileinput.input("chr23_32.block.txt", inplace=1):
         elif out3[0]=="9":
             print("31", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
         elif out3[0]=="10":
-            print("32", out3[1], out3[2], out3[3], out3[4], sep='\t', end='')
+            print("32", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
 
 # combine block files
 blocks=open("gec_blocks.txt", 'w')
