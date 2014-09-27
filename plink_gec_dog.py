@@ -74,7 +74,7 @@ for line in fileinput.input("chr23_39.map", inplace=1):
     elif line.startswith("38"):
         line=line.replace("38", "16",1)
         print(line, end='')
-    elif line.startswith("X"):
+    elif "X" in line:
         line=line.replace("X", "17",1)
         print(line, end='')
 
