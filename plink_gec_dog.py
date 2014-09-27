@@ -11,7 +11,7 @@ plink1="./plink --file "
 plink2=" --silent --dog --nonfounders --allow-no-sex --snps "
 plink3=" --recode --out "
 snp1_22="BICF2G630707759-G1212f41S99"
-snp23_39="BICF2P653617-TIGRP2P134917_rs8450925"
+snp23_39="BICF2P653617-YNp1-608"
 print("\nPLINKing...\n")
 
 # string PLINK commands together & run as subprocess for GEC input
@@ -73,6 +73,12 @@ for line in fileinput.input("chr23_39.map", inplace=1):
         print(line, end='')
     elif line.startswith("38"):
         line=line.replace("38", "16",1)
+        print(line, end='')
+    elif line.startswith("39"):
+        line=line.replace("39", "17",1)
+        print(line, end='')
+    elif line.startswith("40"):
+        line=line.replace("40", "18",1)
         print(line, end='')
 
 os.chdir("..")
@@ -155,7 +161,9 @@ for line in fileinput.input("chr23_39.block.txt", inplace=1):
         elif out3[0]=="16":
             print("38", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
         elif out3[0]=="17":
-            print("39", out3[1], out3[2], out3[3], out3[4], sep='\t', end='')
+            print("X", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="18":
+            print("Y", out3[1], out3[2], out3[3], out3[4], sep='\t' end='')
 
 # combine block files
 blocks=open("gec_blocks.txt", 'w')
@@ -233,8 +241,10 @@ for line in fileinput.input("gec_out2"):
             line=line.replace("chromosome 16 ", "chromosome 38 ")
             gec_out3.write(line)
         elif "chromosome 17 " in line:
-            line=line.replace("chromosome X ", "chromosome 39 ")
+            line=line.replace("chromosome 17 ", "chromosome X ")
             gec_out3.write(line)
+        elif "chromosome 18 " in line:
+            line=line.replace("chromosome 18 ", "chromosome Y ")
     elif "MAF" in line:
         gec_out3.write(line)
     elif line.startswith("The estimated"):
@@ -287,8 +297,10 @@ for line in fileinput.input("gec_out2"):
             line=line.replace("chromosome 16", "chromosome 38")
             gec_out3.write(line)
         elif "chromosome 17" in line:
-            line=line.replace("chromosome 17", "chromosome 39")
+            line=line.replace("chromosome 17", "chromosome X")
             gec_out3.write(line)
+        elif "chromosome 18" in line:
+            line=line.replace("chromosome 18", "chromosome X")
 
 # move combined output into working directory
 os.rename("gec_out3.txt", "../gec_out3.txt")
