@@ -1,4 +1,4 @@
-import subprocess, shlex, fileinput, sys, os, glob
+import subprocess, shlex, fileinput, sys, os, glob, shutil
 
 os.makedirs(".output", exist_ok=True)
 
@@ -159,8 +159,6 @@ for line in fileinput.input("chr23_39.block.txt"):
     blocks2.write(line)
 
 os.rename("gec_blocks.txt", "../gec_blocks.txt")
-for i in glob.glob(u'chr*'):
-    os.unlink(i)
 
 gec_out3=open("gec_out3.txt", 'a')
 for line in fileinput.input("gec_out"):
@@ -288,6 +286,7 @@ os.rename("gec_out3.txt", "../gec_out3.txt")
 os.chdir("..")
 os.rename("gec_out3.txt", filename+"_gec_out.txt")
 os.rename("gec_blocks.txt", filename+"_gec_blocks.txt")
+shutil.rmtree(".output")
 
 print("Observed markers: ", obs)
 print("Effective markers: ", eff)
