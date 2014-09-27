@@ -11,7 +11,7 @@ plink1="./plink --file "
 plink2=" --silent --dog --nonfounders --allow-no-sex --snps "
 plink3=" --recode --out "
 snp1_22="BICF2G630707759-G1212f41S99"
-snp23_39="BICF2P653617-YNp1-608"
+snp23_39="BICF2P653617-'YNp1-608'"
 print("\nPLINKing...\n")
 
 # string PLINK commands together & run as subprocess for GEC input
