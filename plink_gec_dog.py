@@ -74,9 +74,6 @@ for line in fileinput.input("chr23_39.map", inplace=1):
     elif line.startswith("38"):
         line=line.replace("38", "16",1)
         print(line, end='')
-    elif "X" in line:
-        line=line.replace("X", "17",1)
-        print(line, end='')
 
 os.chdir("..")
 
@@ -236,7 +233,7 @@ for line in fileinput.input("gec_out2"):
             line=line.replace("chromosome 16 ", "chromosome 38 ")
             gec_out3.write(line)
         elif "chromosome 17 " in line:
-            line=line.replace("chromosome 17 ", "chromosome 39 ")
+            line=line.replace("chromosome X ", "chromosome 39 ")
             gec_out3.write(line)
     elif "MAF" in line:
         gec_out3.write(line)
