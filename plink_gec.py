@@ -9,13 +9,13 @@ filename=input("\nFile name?\n")
 # ask user for species
 species=input("\nSpecies? (horse or dog)\n")
 while species!="horse" and species!="dog":
-    species=input("Invalid entry. Enter horse or dog: ")
+    species=input("Invalid entry. Enter horse or dog.\n")
 
 # if horse, ask user which SNP chip to set SNP boundaries
 if species=="horse":
     snpchip=input("\nWhich SNP chip? (50K or 70K)\n")
     while snpchip!="50K" and snpchip!="70K":
-        snpchip=input("Invalid entry. Enter 50K or 70K: ")
+        snpchip=input("Invalid entry. Enter 50K or 70K.\n")
 
 # set SNP boundaries in PLINK commands
 plink1="./plink --file "
