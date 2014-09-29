@@ -324,11 +324,11 @@ os.rename("gec_blocks.txt", filename+"_gec_blocks.txt")
 shutil.rmtree(".output")
 
 # print calculated values
-print("Observed markers: ", obs)
-print("Effective markers: ", eff)
-print("Suggestive p-value: <", format(suggestive, '.3e'))
-print("Significant p-value: <", format(significant, '.3e'))
-print("Highly significant p-value: <", format(hsignificant, '.3e'), "\n")
-print("Block-wise summary can be found in ", filename, ".block.txt", sep='')
-print("Effective marker summary by chromosome can be found in ", filename,
+print("Observed markers: ", obs, sep='\t')
+print("Effective markers: ", eff, sep='\t')
+print("Suggestive p-value: ", format(suggestive, '.3e'), sep='\t')
+print("Significant p-value: ", format(significant, '.3e'), sep='\t')
+print("Highly significant p-value: ", format(hsignificant, '.3e'), "\n", sep='\t')
+print("Block-wise summary can be found at ", filename, ".block.txt", sep='')
+print("Effective marker summary by chromosome can be found at ", filename,
       "_gec_out.txt\n", sep='')
