@@ -6,26 +6,53 @@ os.makedirs(".output", exist_ok=True)
 # ask user for filename from map/ped files
 filename=input("\nFile name?\n")
 
-# ask user which SNP chip to set SNP boundaries from
-snpchip=input("\nWhich SNP chip? (50K or 70K)\n")
+# ask user for species
+species=input("\nSpecies? (horse or dog)\n")
+
+# get SNP boundaries and names from map file
+snp1_list=[]
+snp22_list=[]
+snp23_list=[]
+snpX_list=[]
+def position(t):
+    return int(t[3])
+with open(filename+".map", 'r') as mapfile:
+    lines=[line for line in mapfile]
+    for i in range(0,len(lines)):
+        line=lines[i].strip().split('\t')
+        if line[0]=="1":
+            snp1_list.append(line)
+        elif line[0]=="22":
+            snp22_list.append(line)
+        elif line[0]=="23":
+            snp23_list.append(line)
+        if species=="horse" and (line[0]=="32" or line[0]=="X"):
+            snpX_list.append(line)
+        if species=="dog" and (line[0]=="39" or line[0]=="X"):
+            snpX_list.append(line)
+snp1_list=sorted(snp1_list, key=position)
+snp1=snp1_list[0][1]
+snp22_list=sorted(snp22_list, key=position)
+snp22=snp22_list[(len(snp22_list)-1)][1]
+snp23_list=sorted(snp23_list, key=position)
+snp23=snp23_list[0][1]
+snpX_list=sorted(snpX_list, key=position)
+snpX=snpX_list[(len(snpX_list)-1)][1]
 
 # set SNP boundaries in PLINK commands
 plink1="./plink --file "
-plink2=" --silent --horse --nonfounders --allow-no-sex --snps "
+plink2=" --silent --nonfounders --allow-no-sex --snps "
 plink3=" --recode --out "
-if snpchip=="50K":
-    snp1_22="chr1.72460-chr22.49944830"
-    snp23_32="chr23.41804-chrX.124108865"
-elif snpchip=="70K":
-    snp1_22="chr1.15656-chr22.49944830"
-    snp23_32="chr23.4510-chrX.124108865"
+snp1_22=snp1+"-"+snp22
+snp23_32=snp23+"-"+snpX
+
 print("\nPLINKing...\n")
 
 # string PLINK commands together & run as subprocess for GEC input
-plink=plink1+filename+plink2+snp1_22+plink3+".output/chr1_22"
+plink=plink1+filename+" --"+species+plink2+snp1_22+plink3+".output/chr1_22"
 plink=shlex.split(plink)
 p=subprocess.Popen(plink).wait()
-plink=plink1+filename+plink2+snp23_32+plink3+".output/chr23_32"
+plink=plink1+filename+" --"+species+plink2+snp23_32+plink3+".output/chr23_32"
 plink=shlex.split(plink)
 p=subprocess.Popen(plink).wait()
 
@@ -62,6 +89,27 @@ for line in fileinput.input("chr23_32.map", inplace=1):
         print(line, end='')
     elif line.startswith("32"):
         line=line.replace("32", "10",1)
+        print(line, end='')
+    elif line.startswith("33"):
+        line=line.replace("33", "11",1)
+        print(line, end='')
+    elif line.startswith("34"):
+        line=line.replace("34", "12",1)
+        print(line, end='')
+    elif line.startswith("35"):
+        line=line.replace("35", "13",1)
+        print(line, end='')
+    elif line.startswith("36"):
+        line=line.replace("36", "14",1)
+        print(line, end='')
+    elif line.startswith("37"):
+        line=line.replace("37", "15",1)
+        print(line, end='')
+    elif line.startswith("38"):
+        line=line.replace("38", "16",1)
+        print(line, end='')
+    elif line.startswith("39"):
+        line=line.replace("39", "17",1)
         print(line, end='')
 
 os.chdir("..")
@@ -131,6 +179,20 @@ for line in fileinput.input("chr23_32.block.txt", inplace=1):
             print("31", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
         elif out3[0]=="10":
             print("32", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="11":
+            print("33", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="12":
+            print("34", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="13":
+            print("35", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="14":
+            print("36", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="15":
+            print("37", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="16":
+            print("38", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
+        elif out3[0]=="17":
+            print("X", out3[1], out3[2], out3[3], out3[4], sep='\t', end='\n')
 
 # combine block files
 blocks=open("gec_blocks.txt", 'w')
@@ -189,6 +251,27 @@ for line in fileinput.input("gec_out2"):
         elif "chromosome 10 " in line:
             line=line.replace("chromosome 10 ", "chromosome 32 ")
             gec_out3.write(line)
+        elif "chromosome 11 " in line:
+            line=line.replace("chromosome 11 ", "chromosome 33 ")
+            gec_out3.write(line)
+        elif "chromosome 12 " in line:
+            line=line.replace("chromosome 12 ", "chromosome 34 ")
+            gec_out3.write(line)
+        elif "chromosome 13 " in line:
+            line=line.replace("chromosome 13 ", "chromosome 35 ")
+            gec_out3.write(line)
+        elif "chromosome 14 " in line:
+            line=line.replace("chromosome 14 ", "chromosome 36 ")
+            gec_out3.write(line)
+        elif "chromosome 15 " in line:
+            line=line.replace("chromosome 15 ", "chromosome 37 ")
+            gec_out3.write(line)
+        elif "chromosome 16 " in line:
+            line=line.replace("chromosome 16 ", "chromosome 38 ")
+            gec_out3.write(line)
+        elif "chromosome 17 " in line:
+            line=line.replace("chromosome 17 ", "chromosome X ")
+            gec_out3.write(line)        
     elif "MAF" in line:
         gec_out3.write(line)
     elif line.startswith("The estimated"):
@@ -222,6 +305,27 @@ for line in fileinput.input("gec_out2"):
         elif "chromosome 10" in line:
             line=line.replace("chromosome 10", "chromosome 32")
             gec_out3.write(line)
+        elif "chromosome 11" in line:
+            line=line.replace("chromosome 11", "chromosome 33")
+            gec_out3.write(line)
+        elif "chromosome 12" in line:
+            line=line.replace("chromosome 12", "chromosome 34")
+            gec_out3.write(line)
+        elif "chromosome 13" in line:
+            line=line.replace("chromosome 13", "chromosome 35")
+            gec_out3.write(line)
+        elif "chromosome 14" in line:
+            line=line.replace("chromosome 14", "chromosome 36")
+            gec_out3.write(line)
+        elif "chromosome 15" in line:
+            line=line.replace("chromosome 15", "chromosome 37")
+            gec_out3.write(line)
+        elif "chromosome 16" in line:
+            line=line.replace("chromosome 16", "chromosome 38")
+            gec_out3.write(line)
+        elif "chromosome 17" in line:
+            line=line.replace("chromosome 17", "chromosome X")
+            gec_out3.write(line)
 
 # finish formatting GEC output
 output=[]
@@ -246,10 +350,10 @@ os.rename("gec_blocks.txt", filename+"_gec_blocks.txt")
 shutil.rmtree(".output")
 
 # print calculated values
-print("Observed markers: ", obs, sep='\t')
-print("Effective markers: ", eff, sep='\t')
-print("Suggestive p-value: ", format(suggestive, '.3e'), sep='\t')
-print("Significant p-value: ", format(significant, '.3e'), sep='\t')
-print("Highly significant p-value: <", format(hsignificant, '.3e'), "\n", sep='\t')
-print("Block-wise summary can be found in ", filename, ".block.txt", sep='')
+print("Observed markers: ", obs)
+print("Effective markers: ", eff)
+print("Suggestive p-value: <", format(suggestive, '.3e'))
+print("Significant p-value: <", format(significant, '.3e'))
+print("Highly significant p-value: <", format(hsignificant, '.3e'), "\n")
+print("Block-wise summary can be found in ", filename, ".blocks.txt", sep='')
 print("Effective marker summary by chromosome can be found in ", filename, "_gec_out.txt\n", sep='')
