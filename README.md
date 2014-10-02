@@ -14,9 +14,4 @@ http://pngu.mgh.harvard.edu/~purcell/plink/
 GEC documentation and download can be found here:
 http://statgenpro.psychiatry.hku.hk/gec/
 
-The script plink_gec.py is specifically written for horse
-populations genotyped on the Illumina EquineSNP50 or SNP70
-BeadChip arrays and canine samples genotyped
-using the Illumina CanineHD BeadChip.
-
 Usage: python3 plink_gec.py
